@@ -1,16 +1,26 @@
 const functions = require("firebase-functions");
-const admin = require("firebase-admin"); 
-const { response } = require("express");
-admin.initializeApp();
+const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
+const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
+const serviceAccount = require('./cloud-function-test-c9647-9e51c18a731f.json');
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
- exports.helloWorld = functions.https.onRequest((request, response) => {
-   functions.logger.info("Hello logs!", {structuredData: true});
-   response.send("Hello from Firebase!");
- });
+initializeApp({
+  credential: cert(serviceAccount)
+});
+
+const db = getFirestore();
+
+exports. aa =  functions.https.onRequest(async (request, response) => {
+  let aa = db.collection("test").doc("testId");
+  let aaResult = await aa.get();
+  response.send(aaResult.data());
+});
+
+
+
+
+
+
  
- exports.test = functions.https.onRequest((req,res)=>{
-     response.send("test");
- })
+ 
+ 
+
