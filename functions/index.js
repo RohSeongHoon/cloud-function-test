@@ -29,6 +29,8 @@ exports.addLike = functions.https.onRequest(async (req, res) => {
   const postId = req.query.postId;
 
   const postRef = db.collection("testPosts").doc(postId);
+
+  db.collection("users").doc(userId).collection("likedPosts").doc(postId).set({});
   postRef.collection("likedUsers").doc(userId).set({});
   await postRef.update({
     likeCount: FieldValue.increment(1),
@@ -59,3 +61,5 @@ exports.getTestPost = functions.https.onRequest(async (req, res) => {
 
   res.send(post);
 });
+
+
