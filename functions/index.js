@@ -36,3 +36,26 @@ exports.addLike = functions.https.onRequest(async (req, res) => {
   const postSnapshot = await postRef.get();
   console.log(postSnapshot.data());
 });
+
+exports.getTestPost = functions.https.onRequest(async (req, res) => {
+  const userId = req.query.userId;
+  const postId = req.query.postId;
+
+  const postRef = db.collection("testPosts").doc(postId);
+  const likeSnapshot = await db
+    .collection("testPosts")
+    .doc(postId)
+    .collection("likedUsers")
+    .doc(userId)
+    .get();
+  const postSnapshot = await postRef.get();
+  const post = postSnapshot.data();
+
+  if (likeSnapshot.exists) {
+    post.likeCheck = true;
+  } else {
+    post.likeCheck = false;
+  }
+
+  res.send(post);
+});
