@@ -74,8 +74,24 @@ exports.getTestPost = functions.https.onRequest(async (req, res) => {
       .get();
     const postList = [];
     userSnapshot.forEach(async (doc) => {
-      const postSnapshot = await db.collection("posts").doc(doc.id).get();
+      const postSnapshot = await db.collection("testPosts").doc(doc.id).get();
       postList.push(postSnapshot.data());
       res.send(postList);
+    });
+  });
+
+  exports.deleteLike = functions.https.onRequest(async (req, res) => {
+    const userId = req.query.userId;
+    const postId = req.query.postId;
+  
+    const postRef = db.collection("testPosts").doc(postId);
+    db.collection("users")
+      .doc(userId)
+      .collection("likedPosts")
+      .doc(postId)
+      .delete();
+    await postRef.collection("likeUsers").doc(userId).delete();
+    await postRef.update({
+      likeCnt: FieldValue.increment(-1),
     });
   });
