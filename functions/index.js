@@ -9,18 +9,26 @@ initializeApp({
 
 const db = getFirestore();
 
-exports.aa =  functions.https.onRequest(async (request, response) => {
-  let aa = db.collection("test").doc("testId");
-  let aaResult = await aa.get();
-  response.send(aaResult.data());
-});
-
 
 exports.getTest = functions.https.onRequest(async(req,res)=>{
   let docId = req.query.docId;
   let docRef = db.collection("test").doc(docId);
   let docResult = await docRef.get();
   console.log(docResult.data());
+})
+
+exports.addLike = functions.https.onRequest(async (req,res)=>{
+   const userId = req.query.userId;
+   const postId = req.query.postId;
+
+   const postRef = db.collection("testPosts").doc(postId);
+   postRef.collection("likedUsers").doc(userId).set({})
+
+   const likeSnapshot = await postRef.collection("likedUsers").get();
+   likeSnapshot.forEach((doc)=>{
+     console.log(doc.id);
+   })
+   
 })
 
 
