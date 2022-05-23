@@ -63,3 +63,19 @@ exports.getTestPost = functions.https.onRequest(async (req, res) => {
 });
 
 
+
+  exports.likedPostList = functions.https.onRequest(async (req, res) => {
+    const userId = req.query.userId;
+
+    const userSnapshot = await db
+      .collection("users")
+      .doc(userId)
+      .collection("likedPosts")
+      .get();
+    const postList = [];
+    userSnapshot.forEach(async (doc) => {
+      const postSnapshot = await db.collection("posts").doc(doc.id).get();
+      postList.push(postSnapshot.data());
+      res.send(postList);
+    });
+  });
